@@ -14,10 +14,10 @@ CORS(app)
 
 # Configuração da base de dados
 DB_CONFIG = {
-    'host': os.getenv('DB_HOST', 'localhost'),
-    'database': os.getenv('DB_NAME', 'minigolfe_portugal'),
-    'user': os.getenv('DB_USER', 'root'),
-    'password': os.getenv('DB_PASSWORD', 'Paulinha02'),
+    'host': os.getenv('DB_HOST', 'sql7.freesqldatabase.com'),
+    'database': os.getenv('DB_NAME', 'sql7789028'),
+    'user': os.getenv('DB_USER', 'sql7789028'),
+    'password': os.getenv('DB_PASSWORD', '85kWJyl3js'),
     'charset': 'utf8mb4',
     'use_unicode': True
 }
