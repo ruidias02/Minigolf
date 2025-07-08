@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minigolfe Portugal - Contagem de Tacadas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 20px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .nav-tab:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #27ae60 0%, #2ecc71 100%);
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .game-setup {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .players-list {
+            min-height: 200px;
+            border: 2px dashed #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .player-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .player-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .scoreboard {
+            overflow-x: auto;
+            margin-top: 30px;
+        }
+
+        .scoreboard table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .scoreboard th,
+        .scoreboard td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .scoreboard th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .scoreboard tr:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .score-input {
+            width: 60px;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 5px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .score-input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+
+        .pista-info {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+
+        .total-score {
+            font-weight: bold;
+            font-size: 1.2em;
+            color: #2c3e50;
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #7f8c8d;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .game-setup {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .scoreboard {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏌️ Minigolfe Portugal</h1>
+            <p>Sistema de Contagem de Tacadas para Campos de Minigolfe</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('novo-jogo')">Novo Jogo</button>
+            <button class="nav-tab" onclick="showTab('jogos')">Jogos</button>
+            <button class="nav-tab" onclick="showTab('campos')">Campos</button>
+            <button class="nav-tab" onclick="showTab('jogadores')">Jogadores</button>
+            <button class="nav-tab" onclick="showTab('estatisticas')">Estatísticas</button>
+        </div>
+
+        <!-- Tab: Novo Jogo -->
+        <div id="novo-jogo" class="tab-content active">
+            <div class="card">
+                <h3>Configurar Novo Jogo</h3>
+                <div class="game-setup">
+                    <div>
+                        <div class="form-group">
+                            <label for="campo-select">Selecionar Campo:</label>
+                            <select id="campo-select">
+                                <option value="">Selecione um campo...</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="jogador-select">Adicionar Jogador:</label>
+                            <select id="jogador-select">
+                                <option value="">Selecione um jogador...</option>
+                            </select>
+                        </div>
+                        
+                        <button class="btn" onclick="adicionarJogador()">Adicionar Jogador</button>
+                    </div>
+                    
+                    <div>
+                        <h4>Jogadores Selecionados:</h4>
+                        <div id="jogadores-selecionados" class="players-list">
+                            <p>Nenhum jogador selecionado</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn btn-success" onclick="iniciarJogo()">Iniciar Jogo</button>
+            </div>
+            
+            <!-- Área do Jogo -->
+            <div id="jogo-area" style="display: none;">
+                <div class="card">
+                    <h3 id="jogo-titulo">Jogo em Andamento</h3>
+                    <div id="pista-atual" class="pista-info"></div>
+                    <div class="scoreboard">
+                        <table id="scoreboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Jogador</th>
+                                    <th>Pista Atual</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="scoreboard-body"></tbody>
+                        </table>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <button class="btn" onclick="proximaPista()">Próxima Pista</button>
+                        <button class="btn btn-secondary" onclick="pistaAnterior()">Pista Anterior</button>
+                        <button class="btn btn-success" onclick="finalizarJogo()">Finalizar Jogo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab: Jogos -->
+        <div id="jogos" class="tab-content">
+            <div class="card">
+                <h3>Jogos Recentes</h3>
+                <div id="jogos-lista" class="loading">Carregando jogos...</div>
+            </div>
+        </div>
+
+        <!-- Tab: Campos -->
+        <div id="campos" class="tab-content">
+            <div class="card">
+                <h3>Campos de Minigolfe</h3>
+                <div id="campos-lista" class="loading">Carregando campos...</div>
+            </div>
+        </div>
+
+        <!-- Tab: Jogadores -->
+        <div id="jogadores" class="tab-content">
+            <div class="card">
+                <h3>Gestão de Jogadores</h3>
+                <div style="margin-bottom: 20px;">
+                    <input type="text" id="novo-jogador-nome" placeholder="Nome do jogador">
+                    <input type="email" id="novo-jogador-email" placeholder="Email (opcional)">
+                    <button class="btn" onclick="criarJogador()">Adicionar Jogador</button>
+                </div>
+                <div id="jogadores-lista" class="loading">Carregando jogadores...</div>
+            </div>
+        </div>
+
+        <!-- Tab: Estatísticas -->
+        <div id="estatisticas" class="tab-content">
+            <div class="card">
+                <h3>Estatísticas Gerais</h3>
+                <div id="estatisticas-conteudo" class="loading">Carregando estatísticas...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração da API
+        const API_BASE = `http://${window.location.hostname}:5000/api`;
+
+        
+        // Estado da aplicação
+        let jogoAtual = null;
+        let pistaAtual = 0;
+        let jogadoresSelecionados = [];
+        let campoSelecionado = null;
+        let pistas = [];
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            carregarCampos();
+            carregarJogadores();
+            carregarJogos();
+            carregarEstatisticas();
+        });
+
+        // Navegação entre tabs
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-tab').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Funções da API
+        async function apiRequest(endpoint, method = 'GET', data = null) {
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            };
+            
+            if (data) {
+                options.body = JSON.stringify(data);
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.error || 'Erro na requisição');
+                }
+                
+                return result;
+            } catch (error) {
+                console.error('Erro na API:', error);
+                mostrarAlerta(error.message, 'error');
+                return null;
+            }
+        }
+
+        // Carregar dados
+        async function carregarCampos() {
+            const campos = await apiRequest('/campos');
+            if (campos) {
+                const select = document.getElementById('campo-select');
+                select.innerHTML = '<option value="">Selecione um campo...</option>';
+                campos.forEach(campo => {
+                    const option = document.createElement('option');
+                    option.value = campo.id;
+                    option.textContent = `${campo.nome} - ${campo.cidade_nome} (${campo.total_pistas} pistas)`;
+                    select.appendChild(option);
+                });
+                
+                // Atualizar lista de campos
+                const lista = document.getElementById('campos-lista');
+                lista.innerHTML = '';
+                campos.forEach(campo => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `
+                        <h4>${campo.nome}</h4>
+                        <p><strong>Cidade:</strong> ${campo.cidade_nome}</p>
+                        <p><strong>Tipo:</strong> ${campo.tipo}</p>
+                        <p><strong>Pistas:</strong> ${campo.total_pistas}</p>
+                        ${campo.endereco ? `<p><strong>Endereço:</strong> ${campo.endereco}</p>` : ''}
+                    `;
+                    lista.appendChild(div);
+                });
+            }
+        }
+
+        async function carregarJogadores() {
+            const jogadores = await apiRequest('/jogadores');
+            if (jogadores) {
+                const select = document.getElementById('jogador-select');
+                select.innerHTML = '<option value="">Selecione um jogador...</option>';
+                jogadores.forEach(jogador => {
+                    const option = document.createElement('option');
+                    option.value = jogador.id;
+                    option.textContent = jogador.nome;
+                    select.appendChild(option);
+                });
+                
+                // Atualizar lista de jogadores
+                const lista = document.getElementById('jogadores-lista');
+                lista.innerHTML = '';
+                jogadores.forEach(jogador => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    div.innerHTML = `
+                        <h4>${jogador.nome}</h4>
+                        ${jogador.email ? `<p><strong>Email:</strong> ${jogador.email}</p>` : ''}
+                        ${jogador.cidade_nome ? `<p><strong>Cidade:</strong> ${jogador.cidade_nome}</p>` : ''}
+                    `;
+                    lista.appendChild(div);
+                });
+            }
+        }
+
+        async function carregarJogos() {
+            const jogos = await apiRequest('/jogos');
+            if (jogos) {
+                const lista = document.getElementById('jogos-lista');
+                lista.innerHTML = '';
+                jogos.forEach(jogo => {
+                    const div = document.createElement('div');
+                    div.className = 'card';
+                    const dataJogo = new Date(jogo.data_jogo).toLocaleDateString('pt-PT');
+                    div.innerHTML = `
+                        <h4>${jogo.campo_nome} - ${jogo.cidade_nome}</h4>
+                        <p><strong>Data:</strong> ${dataJogo}</p>
+                        <p><strong>Jogadores:</strong> ${jogo.num_jogadores}</p>
+                        <button class="btn" onclick="verDetalhesJogo(${jogo.id})">Ver Detalhes</button>
+                    `;
+                    lista.appendChild(div);
+                });
+            }
+        }
+
+        async function carregarEstatisticas() {
+            const ranking = await apiRequest('/estatisticas/jogadores');
+            if (ranking) {
+                const conteudo = document.getElementById('estatisticas-conteudo');
+                conteudo.innerHTML = `
+                    <h4>Ranking de Jogadores</h4>
+                    <div class="stats-grid">
+                        ${ranking.slice(0, 10).map((jogador, index) => `
+                            <div class="stat-card">
+                                <div class="stat-number">${index + 1}º</div>
+                                <div class="stat-label">${jogador.nome}</div>
+                                <p>Média: ${jogador.media_tacadas ? jogador.media_tacadas.toFixed(1) : 'N/A'}</p>
+                                <p>Jogos: ${jogador.total_jogos}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+        }
+
+        // Gestão de jogadores
+        function adicionarJogador() {
+            const select = document.getElementById('jogador-select');
+            const jogadorId = select.value;
+            const jogadorNome = select.options[select.selectedIndex].text;
+            
+            if (!jogadorId) {
+                mostrarAlerta('Selecione um jogador', 'error');
+                return;
+            }
+            
+            if (jogadoresSelecionados.find(j => j.id === jogadorId)) {
+                mostrarAlerta('Jogador já foi adicionado', 'error');
+                return;
+            }
+            
+            jogadoresSelecionados.push({
+                id: jogadorId,
+                nome: jogadorNome,
+                tacadas: []
+            });
+            
+            atualizarListaJogadores();
+            select.value = '';
+        }
+
+        function removerJogador(jogadorId) {
+            jogadoresSelecionados = jogadoresSelecionados.filter(j => j.id !== jogadorId);
+            atualizarListaJogadores();
+        }
+
+        function atualizarListaJogadores() {
+            const lista = document.getElementById('jogadores-selecionados');
+            if (jogadoresSelecionados.length === 0) {
+                lista.innerHTML = '<p>Nenhum jogador selecionado</p>';
+                return;
+            }
+            
+            lista.innerHTML = jogadoresSelecionados.map(jogador => `
+                <div class="player-item">
+                    <span>${jogador.nome}</span>
+                    <button class="btn btn-danger" onclick="removerJogador('${jogador.id}')">Remover</button>
+                </div>
+            `).join('');
+        }
+
+        // Gestão do jogo
+        async function iniciarJogo() {
+            const campoId = document.getElementById('campo-select').value;
+            
+            if (!campoId) {
+                mostrarAlerta('Selecione um campo', 'error');
+                return;
+            }
+            
+            if (jogadoresSelecionados.length === 0) {
+                mostrarAlerta('Adicione pelo menos um jogador', 'error');
+                return;
+            }
+            
+            // Carregar detalhes do campo e pistas
+            const campo = await apiRequest(`/campos/${campoId}`);
+            if (!campo) return;
+            
+            campoSelecionado = campo;
+            pistas = campo.pistas;
+            
+            // Criar jogo na API
+            const jogadoresIds = jogadoresSelecionados.map(j => j.id);
+            const novoJogo = await apiRequest('/jogos', 'POST', {
+                campo_id: campoId,
+                jogadores: jogadoresIds
+            });
+            
+            if (!novoJogo) return;
+            
+            jogoAtual = novoJogo.id;
+            pistaAtual = 0;
+            
+            // Inicializar tacadas
+            jogadoresSelecionados.forEach(jogador => {
+                jogador.tacadas = new Array(pistas.length).fill(0);
+            });
+            
+            // Mostrar área do jogo
+            document.getElementById('jogo-area').style.display = 'block';
+            atualizarInterface();
+            
+            mostrarAlerta('Jogo iniciado com sucesso!', 'success');
+        }
+
+        function atualizarInterface() {
+            if (!campoSelecionado || !pistas[pistaAtual]) return;
+            
+            const pista = pistas[pistaAtual];
+            document.getElementById('jogo-titulo').textContent = `${campoSelecionado.nome} - Jogo #${jogoAtual}`;
+            
+            document.getElementById('pista-atual').innerHTML = `
+                <h4>Pista ${pista.numero_pista} ${pista.nome ? '- ' + pista.nome : ''}</h4>
+                <p><strong>Par:</strong> ${pista.par} | <strong>Dificuldade:</strong> ${pista.dificuldade}</p>
+                ${pista.descricao ? `<p>${pista.descricao}</p>` : ''}
+            `;
+            
+            // Atualizar scoreboard
+            const tbody = document.getElementById('scoreboard-body');
+            tbody.innerHTML = jogadoresSelecionados.map(jogador => {
+                const totalTacadas = jogador.tacadas.reduce((sum, tacadas) => sum + tacadas, 0);
+                return `
+                    <tr>
+                        <td><strong>${jogador.nome}</strong></td>
+                        <td>
+                            <input type="number" class="score-input" 
+                                   value="${jogador.tacadas[pistaAtual]}" 
+                                   min="0" max="10"
+                                   onchange="atualizarTacada('${jogador.id}', ${pistaAtual}, this.value)">
+                        </td>
+                        <td class="total-score">${totalTacadas}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function atualizarTacada(jogadorId, pista, tacadas) {
+            const jogador = jogadoresSelecionados.find(j => j.id === jogadorId);
+            if (!jogador) return;
+            
+            jogador.tacadas[pista] = parseInt(tacadas) || 0;
+            
+            // Registrar tacada na API
+            await apiRequest('/tacadas', 'POST', {
+                jogo_id: jogoAtual,
+                jogador_id: jogadorId,
+                pista_id: pistas[pista].id,
+                numero_tacadas: parseInt(tacadas) || 0
+            });
+            
+            atualizarInterface();
+        }
+
+        function proximaPista() {
+            if (pistaAtual < pistas.length - 1) {
+                pistaAtual++;
+                atualizarInterface();
+            }
+        }
+
+        function pistaAnterior() {
+            if (pistaAtual > 0) {
+                pistaAtual--;
+                atualizarInterface();
+            }
+        }
+
+        async function finalizarJogo() {
+            if (!confirm('Tem certeza que deseja finalizar o jogo?')) return;
+            
+            // Calcular resultados finais
+            const resultados = jogadoresSelecionados.map(jogador => {
+                const total = jogador.tacadas.reduce((sum, tacadas) => sum + tacadas, 0);
+                return { nome: jogador.nome, total };
+            }).sort((a, b) => a.total - b.total);
+            
+            let mensagem = 'Jogo Finalizado!\n\nResultados:\n';
+            resultados.forEach((resultado, index) => {
+                mensagem += `${index + 1}º lugar: ${resultado.nome} (${resultado.total} tacadas)\n`;
+            });
+            
+            alert(mensagem);
+            
+            // Resetar o jogo
+            jogoAtual = null;
+            pistaAtual = 0;
+            jogadoresSelecionados = [];
+            campoSelecionado = null;
+            pistas = [];
+            
+            document.getElementById('jogo-area').style.display = 'none';
+            document.getElementById('jogadores-selecionados').innerHTML = '<p>Nenhum jogador selecionado</p>';
+            document.getElementById('campo-select').value = '';
+            
+            // Recarregar dados
+            carregarJogos();
+            carregarEstatisticas();
+            
+            mostrarAlerta('Jogo finalizado com sucesso!', 'success');
+        }
+
+        // Criar novo jogador
+        async function criarJogador() {
+            const nome = document.getElementById('novo-jogador-nome').value.trim();
+            const email = document.getElementById('novo-jogador-email').value.trim();
+            
+            if (!nome) {
+                mostrarAlerta('Nome é obrigatório', 'error');
+                return;
+            }
+            
+            const novoJogador = await apiRequest('/jogadores', 'POST', {
+                nome: nome,
+                email: email || null
+            });
+            
+            if (novoJogador) {
+                document.getElementById('novo-jogador-nome').value = '';
+                document.getElementById('novo-jogador-email').value = '';
+                carregarJogadores();
+                mostrarAlerta('Jogador criado com sucesso!', 'success');
+            }
+        }
+
+        // Ver detalhes do jogo
+        async function verDetalhesJogo(jogoId) {
+            const jogo = await apiRequest(`/jogos/${jogoId}`);
+            if (!jogo) return;
+            
+            let detalhes = `Jogo no ${jogo.campo_nome}\n`;
+            detalhes += `Data: ${new Date(jogo.data_jogo).toLocaleDateString('pt-PT')}\n\n`;
+            detalhes += `Participantes:\n`;
+            
+            jogo.participantes.forEach(participante => {
+                detalhes += `- ${participante.jogador_nome}\n`;
+            });
+            
+            if (jogo.tacadas && jogo.tacadas.length > 0) {
+                detalhes += `\nTacadas por pista:\n`;
+                const pistasTacadas = {};
+                
+                jogo.tacadas.forEach(tacada => {
+                    if (!pistasTacadas[tacada.numero_pista]) {
+                        pistasTacadas[tacada.numero_pista] = {};
+                    }
+                    pistasTacadas[tacada.numero_pista][tacada.jogador_nome] = tacada.numero_tacadas;
+                });
+                
+                Object.keys(pistasTacadas).sort((a, b) => parseInt(a) - parseInt(b)).forEach(pista => {
+                    detalhes += `\nPista ${pista}:\n`;
+                    Object.entries(pistasTacadas[pista]).forEach(([jogador, tacadas]) => {
+                        detalhes += `  ${jogador}: ${tacadas} tacadas\n`;
+                    });
+                });
+            }
+            
+            alert(detalhes);
+        }
+
+        // Utilitários
+        function mostrarAlerta(mensagem, tipo) {
+            const alerta = document.createElement('div');
+            alerta.className = `alert alert-${tipo}`;
+            alerta.textContent = mensagem;
+            
+            // Inserir no topo do container
+            const container = document.querySelector('.container');
+            container.insertBefore(alerta, container.firstChild);
+            
+            // Remover após 3 segundos
+            setTimeout(() => {
+                alerta.remove();
+            }, 3000);
+        }
+
+        // Funções adicionais para melhorar a experiência
+        
+        // Auto-save das tacadas
+        let autoSaveTimeout;
+        function autoSaveTacadas() {
+            clearTimeout(autoSaveTimeout);
+            autoSaveTimeout = setTimeout(() => {
+                if (jogoAtual) {
+                    // Salvar todas as tacadas do jogo atual
+                    jogadoresSelecionados.forEach(jogador => {
+                        jogador.tacadas.forEach((tacadas, index) => {
+                            if (tacadas > 0) {
+                                apiRequest('/tacadas', 'POST', {
+                                    jogo_id: jogoAtual,
+                                    jogador_id: jogador.id,
+                                    pista_id: pistas[index].id,
+                                    numero_tacadas: tacadas
+                                });
+                            }
+                        });
+                    });
+                }
+            }, 1000);
+        }
+
+        // Navegação por teclado
+        document.addEventListener('keydown', function(e) {
+            if (jogoAtual) {
+                if (e.key === 'ArrowLeft') {
+                    pistaAnterior();
+                } else if (e.key === 'ArrowRight') {
+                    proximaPista();
+                } else if (e.key === 'Enter' && e.ctrlKey) {
+                    finalizarJogo();
+                }
+            }
+        });
+
+        // Validação de campos
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('score-input')) {
+                const value = parseInt(e.target.value);
+                if (value < 0) e.target.value = 0;
+                if (value > 10) e.target.value = 10;
+            }
+        });
+
+        // Confirmação antes de sair da página durante um jogo
+        window.addEventListener('beforeunload', function(e) {
+            if (jogoAtual) {
+                e.preventDefault();
+                e.returnValue = '';
+                return 'Tem um jogo em andamento. Tem certeza que deseja sair?';
+            }
+        });
+
+        // Função para exportar resultados
+        function exportarResultados() {
+            if (!jogoAtual) return;
+            
+            const resultados = jogadoresSelecionados.map(jogador => {
+                const total = jogador.tacadas.reduce((sum, tacadas) => sum + tacadas, 0);
+                return {
+                    nome: jogador.nome,
+                    tacadas: jogador.tacadas,
+                    total: total
+                };
+            });
+            
+            const csv = 'Nome,Tacadas por Pista,Total\n' + 
+                       resultados.map(r => `${r.nome},"${r.tacadas.join(',')}",${r.total}`).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `jogo_${jogoAtual}_resultados.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Função para imprimir scoreboard
+        function imprimirScoreboard() {
+            if (!jogoAtual) return;
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Scoreboard - Jogo ${jogoAtual}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; margin: 20px; }
+                        table { border-collapse: collapse; width: 100%; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+                        th { background-color: #f2f2f2; }
+                        .header { text-align: center; margin-bottom: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>${campoSelecionado.nome}</h1>
+                        <h2>Jogo ${jogoAtual}</h2>
+                        <p>Data: ${new Date().toLocaleDateString('pt-PT')}</p>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Jogador</th>
+                                ${pistas.map(p => `<th>Pista ${p.numero_pista}</th>`).join('')}
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${jogadoresSelecionados.map(jogador => {
+                                const total = jogador.tacadas.reduce((sum, tacadas) => sum + tacadas, 0);
+                                return `
+                                    <tr>
+                                        <td><strong>${jogador.nome}</strong></td>
+                                        ${jogador.tacadas.map(t => `<td>${t || '-'}</td>`).join('')}
+                                        <td><strong>${total}</strong></td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                    </table>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // Adicionar botões de exportação e impressão
+        document.addEventListener('DOMContentLoaded', function() {
+            const jogoArea = document.getElementById('jogo-area');
+            const buttonsContainer = jogoArea.querySelector('div[style*="margin-top: 20px"]');
+            
+            if (buttonsContainer) {
+                buttonsContainer.innerHTML += `
+                    <button class="btn btn-secondary" onclick="exportarResultados()">Exportar CSV</button>
+                    <button class="btn btn-secondary" onclick="imprimirScoreboard()">Imprimir</button>
+                `;
+            }
+        });
+
+        // Melhorar a responsividade
+        function ajustarInterface() {
+            const isMobile = window.innerWidth < 768;
+            const scoreboard = document.querySelector('.scoreboard');
+            
+            if (isMobile && scoreboard) {
+                scoreboard.style.fontSize = '0.8em';
+            }
+        }
+
+        window.addEventListener('resize', ajustarInterface);
+        document.addEventListener('DOMContentLoaded', ajustarInterface);
+
+        // Funcionalidade de pesquisa
+        function adicionarPesquisa() {
+            const tabs = ['campos', 'jogadores', 'jogos'];
+            
+            tabs.forEach(tab => {
+                const tabContent = document.getElementById(tab);
+                const card = tabContent.querySelector('.card');
+                
+                if (card) {
+                    const searchInput = document.createElement('input');
+                    searchInput.type = 'text';
+                    searchInput.placeholder = `Pesquisar ${tab}...`;
+                    searchInput.style.marginBottom = '20px';
+                    searchInput.style.width = '100%';
+                    searchInput.style.padding = '10px';
+                    searchInput.style.border = '2px solid #e0e0e0';
+                    searchInput.style.borderRadius = '10px';
+                    
+                    searchInput.addEventListener('input', function(e) {
+                        const termo = e.target.value.toLowerCase();
+                        const cards = tabContent.querySelectorAll('.card:not(:first-child)');
+                        
+                        cards.forEach(card => {
+                            const texto = card.textContent.toLowerCase();
+                            card.style.display = texto.includes(termo) ? 'block' : 'none';
+                        });
+                    });
+                    
+                    card.appendChild(searchInput);
+                }
+            });
+        }
+
+        // Inicializar pesquisa após carregar dados
+        setTimeout(adicionarPesquisa, 2000);
+
+        // Notificações de conexão
+        let isOnline = navigator.onLine;
+        
+        window.addEventListener('online', function() {
+            if (!isOnline) {
+                mostrarAlerta('Conexão restaurada', 'success');
+                isOnline = true;
+            }
+        });
+        
+        window.addEventListener('offline', function() {
+            mostrarAlerta('Sem conexão com a internet', 'error');
+            isOnline = false;
+        });
+
+        // Função para backup local (caso offline)
+        function salvarBackupLocal() {
+            if (jogoAtual) {
+                const backup = {
+                    jogo: jogoAtual,
+                    campo: campoSelecionado,
+                    jogadores: jogadoresSelecionados,
+                    pistaAtual: pistaAtual,
+                    timestamp: new Date().toISOString()
+                };
+                
+                localStorage.setItem('minigolfe_backup', JSON.stringify(backup));
+            }
+        }
+
+        function carregarBackupLocal() {
+            const backup = localStorage.getItem('minigolfe_backup');
+            if (backup) {
+                const dados = JSON.parse(backup);
+                
+                if (confirm('Foi encontrado um backup de jogo. Deseja restaurar?')) {
+                    jogoAtual = dados.jogo;
+                    campoSelecionado = dados.campo;
+                    jogadoresSelecionados = dados.jogadores;
+                    pistaAtual = dados.pistaAtual;
+                    pistas = dados.campo.pistas;
+                    
+                    document.getElementById('jogo-area').style.display = 'block';
+                    atualizarInterface();
+                    
+                    mostrarAlerta('Backup restaurado com sucesso!', 'success');
+                }
+                
+                localStorage.removeItem('minigolfe_backup');
+            }
+        }
+
+        // Salvar backup a cada mudança
+        setInterval(salvarBackupLocal, 30000); // A cada 30 segundos
+
+        // Carregar backup ao iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(carregarBackupLocal, 1000);
+        });
+    </script>
+</body>
+</html>
